@@ -1,3 +1,3 @@
-module github.com/varbhat/sfs
+module github.com/varbhat/serv
 
-go 1.16
+go 1.17

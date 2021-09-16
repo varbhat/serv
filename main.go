@@ -28,10 +28,17 @@ func (fs *webFS) Open(name string) (http.File, error) {
 	return f, err
 }
 
+func reqLogger(H http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+		H.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	var Flagconfig fc
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "sfs is Simple File Server\n\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "serv is HTTP File/Directory Server\n\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
 
 		flag.VisitAll(func(f *flag.Flag) {
@@ -57,16 +64,16 @@ func main() {
 	if Flagconfig.SPA {
 		if Flagconfig.TLSCertPath != "" && Flagconfig.TLSKeyPath != "" {
 			log.Println("Serving HTTPS with TLS Cert ", Flagconfig.TLSCertPath, " and TLS Key ", Flagconfig.TLSKeyPath)
-			log.Fatal(http.ListenAndServeTLS(Flagconfig.ListenAddress, Flagconfig.TLSCertPath, Flagconfig.TLSKeyPath, http.FileServer(&webFS{Fs: http.Dir(Flagconfig.DirPath)})))
+			log.Fatal(http.ListenAndServeTLS(Flagconfig.ListenAddress, Flagconfig.TLSCertPath, Flagconfig.TLSKeyPath, reqLogger(http.FileServer(&webFS{Fs: http.Dir(Flagconfig.DirPath)}))))
 		} else {
-			log.Fatal(http.ListenAndServe(Flagconfig.ListenAddress, http.FileServer(&webFS{Fs: http.Dir(Flagconfig.DirPath)})))
+			log.Fatal(http.ListenAndServe(Flagconfig.ListenAddress, reqLogger(http.FileServer(&webFS{Fs: http.Dir(Flagconfig.DirPath)}))))
 		}
 	} else {
 		if Flagconfig.TLSCertPath != "" && Flagconfig.TLSKeyPath != "" {
 			log.Println("Serving HTTPS with TLS Cert ", Flagconfig.TLSCertPath, " and TLS Key ", Flagconfig.TLSKeyPath)
-			log.Fatal(http.ListenAndServeTLS(Flagconfig.ListenAddress, Flagconfig.TLSCertPath, Flagconfig.TLSKeyPath, http.FileServer(http.Dir(Flagconfig.DirPath))))
+			log.Fatal(http.ListenAndServeTLS(Flagconfig.ListenAddress, Flagconfig.TLSCertPath, Flagconfig.TLSKeyPath, reqLogger(http.FileServer(http.Dir(Flagconfig.DirPath)))))
 		} else {
-			log.Fatal(http.ListenAndServe(Flagconfig.ListenAddress, http.FileServer(http.Dir(Flagconfig.DirPath))))
+			log.Fatal(http.ListenAndServe(Flagconfig.ListenAddress, reqLogger(http.FileServer(http.Dir(Flagconfig.DirPath)))))
 		}
 	}
 
