@@ -1,8 +1,6 @@
 <h1 align="center">serv</h1> 
 <p align="center">HTTP File/Directory Server</p>
 
-<br>
-
 ## Introduction
 - `serv` is HTTP File/Directory Server.
 - It can serve Directories, Files and SPAs over HTTP(or HTTPS).
