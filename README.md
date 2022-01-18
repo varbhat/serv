@@ -8,7 +8,7 @@
 
 ## Installation
 
-You can download binary for your OS from [Releases](https://github.com/varbhat/serv/releases/latest) . Also , if you have [Go](https://golang.org/) installed , you can install `torpar` by typing this in terminal.
+You can download binary for your OS from [Releases](https://github.com/varbhat/serv/releases/latest) . Also , if you have [Go](https://golang.org/) installed , you can install `serv` by typing this in terminal.
 
 ```bash
 go install github.com/varbhat/serv@latest
